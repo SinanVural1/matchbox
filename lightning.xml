@@ -1,0 +1,56 @@
+<ShaderNodePreset SupportsAdaptiveDegradation="False" SupportsAction="False" SupportsTransition="False" SupportsTimeline="False" TimelineUseBack="False" MatteProvider="False" CommercialUsePermitted="True" ShaderType="Matchbox" SoftwareVersion="2017.0.0" LimitInputsToTexture="True" Version="4" Description="Procedural Lightning with curvature and branching" Name="Lightning">
+   <Shader Clear="0" GridSubdivision="1" OutputBitDepth="Output" Index="1">
+      
+      <!-- Spatial Controls -->
+      <Uniform Type="vec2" Name="p1" DisplayName="Start Point" Row="0" Col="0" Page="0" ValueType="Position" IconType="Axis">
+         <SubUniform Index="0" DisplayName="X" Min="0.0" Max="10000.0" Default="0.15" Type="float"/>
+         <SubUniform Index="1" DisplayName="Y" Min="0.0" Max="10000.0" Default="0.5" Type="float"/>
+      </Uniform>
+      <Uniform Type="vec2" Name="p2" DisplayName="End Point" Row="2" Col="0" Page="0" ValueType="Position" IconType="Axis">
+         <SubUniform Index="0" DisplayName="X" Min="0.0" Max="10000.0" Default="0.85" Type="float"/>
+         <SubUniform Index="1" DisplayName="Y" Min="0.0" Max="10000.0" Default="0.5" Type="float"/>
+      </Uniform>
+      
+      <!-- Appearance (Col 1) -->
+      <Uniform ResDependent="None" Max="100.0" Min="0.0" Default="3.0" Inc="0.1" Tooltip="Bolt Width" Row="0" Col="1" Page="0" Type="float" ChannelName="width" DisplayName="Width" Name="width"/>
+      <Uniform ResDependent="None" Max="100.0" Min="0.0" Default="15.0" Inc="0.1" Tooltip="Glow Intensity" Row="1" Col="1" Page="0" Type="float" ChannelName="glow" DisplayName="Glow" Name="glow"/>
+      
+      <!-- Width Profile Curve (Page 1) -->
+      <!-- Curves take 2 columns, so placing at Col 0 on Page 1 -->
+      <Uniform 
+         Inc="1" 
+         Tooltip="Profile of the bolt width along its length" 
+         Row="0" 
+         Col="0" 
+         Page="1" 
+         Type="int" 
+         DisplayName="Width Profile" 
+         Name="widthProfile" 
+         CurveBackground="0" 
+         ValueType="Curve" 
+         CurveMinY="0" 
+         CurveMaxY="1" 
+         CurveShape="1">
+      </Uniform>
+
+      <!-- Noise / Animation (Col 2) -->
+      <Uniform ResDependent="None" Max="10.0" Min="0.0" Default="1.0" Inc="0.1" Tooltip="Animation speed" Row="0" Col="2" Page="0" Type="float" ChannelName="wiggleSpeed" DisplayName="Speed" Name="wiggleSpeed"/>
+      <Uniform ResDependent="None" Max="100.0" Min="0.0" Default="30.0" Inc="1.0" Tooltip="Wiggle Amplitude" Row="1" Col="2" Page="0" Type="float" ChannelName="wiggleAmp" DisplayName="Amplitude" Name="wiggleAmp"/>
+      <Uniform ResDependent="None" Max="10.0" Min="0.1" Default="1.0" Inc="0.1" Tooltip="Noise Detail/Frequency" Row="2" Col="2" Page="0" Type="float" ChannelName="detail" DisplayName="Detail" Name="detail"/>
+
+      <!-- Branches (Col 3) -->
+      <Uniform ResDependent="None" Max="10" Min="0" Default="5" Inc="1" Tooltip="Number of branches" Row="0" Col="3" Page="0" Type="int" ChannelName="branchCount" DisplayName="Branches" Name="branchCount"/>
+      <Uniform ResDependent="None" Max="500.0" Min="0.0" Default="120.0" Inc="1.0" Tooltip="Branch Length" Row="1" Col="3" Page="0" Type="float" ChannelName="branchLen" DisplayName="Branch Len" Name="branchLen"/>
+      <Uniform ResDependent="None" Max="180.0" Min="0.0" Default="45.0" Inc="1.0" Tooltip="Branch Angle" Row="2" Col="3" Page="0" Type="float" ChannelName="branchAngle" DisplayName="Branch Angle" Name="branchAngle"/>
+
+   </Shader>
+   <Page Name="Controls" Page="0">
+      <Col Name="Points" Col="0" Page="0"/>
+      <Col Name="Style" Col="1" Page="0"/>
+      <Col Name="Noise" Col="2" Page="0"/>
+      <Col Name="Branches" Col="3" Page="0"/>
+   </Page>
+   <Page Name="Profile" Page="1">
+      <Col Name="Curve" Col="0" Page="1"/>
+   </Page>
+</ShaderNodePreset>
