@@ -1,0 +1,195 @@
+<ShaderNodePreset SupportsAdaptiveDegradation="False" Description="Regular Polyhedra shader based on Shadertoy by FabriceNeyret2" LimitInputsToTexture="True" Version="1" Name="Polyhedra">
+   <Shader OutputBitDepth="Output" Index="1">
+      <Uniform Index="0" NoInput="Error" Tooltip="" DisplayName="Front" InputType="Front" Mipmaps="False" GL_TEXTURE_WRAP_T="GL_CLAMP_TO_EDGE" GL_TEXTURE_WRAP_S="GL_CLAMP_TO_EDGE" GL_TEXTURE_MAG_FILTER="GL_LINEAR" GL_TEXTURE_MIN_FILTER="GL_LINEAR" Type="sampler2D" Name="Front">
+      </Uniform>
+
+
+      <!-- Polyhedra Controls -->
+      <Uniform Max="5" Min="3" Default="3" Inc="1" Tooltip="Number of sides for base polygon (3=Tetra, 4=Cube/Octa, 5=Dodeca/Icosa)" Row="0" Col="0" Page="0" DisplayName="Poly Type" Type="int" Name="Type">
+      </Uniform>
+
+      <Uniform Max="1.0" Min="0.0" Default="0.0" Inc="0.01" Tooltip="Barycentric Coordinate U" Row="1" Col="0" Page="0" DisplayName="Barycentric U" Type="float" Name="U_bary">
+      </Uniform>
+      <Uniform Max="1.0" Min="0.0" Default="0.0" Inc="0.01" Tooltip="Barycentric Coordinate V" Row="2" Col="0" Page="0" DisplayName="Barycentric V" Type="float" Name="V_bary">
+      </Uniform>
+      <Uniform Max="1.0" Min="0.0" Default="1.0" Inc="0.01" Tooltip="Barycentric Coordinate W" Row="3" Col="0" Page="0" DisplayName="Barycentric W" Type="float" Name="W_bary">
+      </Uniform>
+
+      <Uniform Max="1.0" Min="0.0" Default="1.0" Inc="0.01" Tooltip="Mix between Sphere and Polyhedron" Row="4" Col="0" Page="0" DisplayName="Spherify" Type="float" Name="Mix_Shape">
+      </Uniform>
+
+      <Uniform ResDependent="None" Max="100.0" Min="0.01" Default="1.0" Inc="0.01" Tooltip="Global Object Scale" Row="0" Col="1" Page="0" DisplayName="Overall Size" Type="float" Name="Object_Scale">
+      </Uniform>
+      <Uniform ResDependent="None" Max="1.0" Min="0.0" Default="0.07" Inc="0.001" Tooltip="Radius of Vertices" Row="1" Col="1" Page="0" DisplayName="Vertex Size" Type="float" Name="Vertex_Radius">
+      </Uniform>
+      <Uniform ResDependent="None" Max="1.0" Min="0.0" Default="0.03" Inc="0.001" Tooltip="Radius of Segments/Edges" Row="2" Col="1" Page="0" DisplayName="Edge Size" Type="float" Name="Segment_Radius">
+      </Uniform>
+
+      <!-- Visibility Controls -->
+      <Uniform Default="True" Tooltip="Show Faces" Row="3" Col="1" Page="0" DisplayName="Show Faces" Type="bool" Name="Show_Faces">
+      </Uniform>
+      <Uniform Default="True" Tooltip="Show Segments" Row="4" Col="1" Page="0" DisplayName="Show Segments" Type="bool" Name="Show_Segments">
+      </Uniform>
+      <Uniform Default="True" Tooltip="Show Vertices" Row="5" Col="1" Page="0" DisplayName="Show Vertices" Type="bool" Name="Show_Vertices">
+      </Uniform>
+
+      <Uniform ResDependent="None" Max="180.0" Min="0.1" Default="60.0" Inc="0.1" Tooltip="Field of View (Degrees)" Row="1" Col="3" Page="0" DisplayName="FOV" Type="float" Name="FOV">
+      </Uniform>
+
+      <!-- Camera Rotation -->
+      <Uniform ResDependent="None" Max="1000000.0" Min="-1000000.0" Default="0.0" Inc="1.0" Tooltip="" Row="1" Col="2" Page="0" DisplayName="Rotation" Type="vec3" Name="Rotation">
+         <SubUniform ResDependent="None" Max="1000000.0" Min="-1000000.0" Default="0.0" Inc="1.0" Tooltip="" Row="1" Col="2" Page="0" DisplayName="Rotation X" Type="float" Name="Rotation_x">
+         </SubUniform>
+         <SubUniform ResDependent="None" Max="1000000.0" Min="-1000000.0" Default="0.0" Inc="1.0" Tooltip="" Row="2" Col="2" Page="0" DisplayName="Rotation Y" Type="float" Name="Rotation_y">
+         </SubUniform>
+         <SubUniform ResDependent="None" Max="1000000.0" Min="-1000000.0" Default="0.0" Inc="1.0" Tooltip="" Row="3" Col="2" Page="0" DisplayName="Rotation Z" Type="float" Name="Rotation_z">
+         </SubUniform>
+      </Uniform>
+
+      <!-- Page 2: Colors -->
+      <!-- Face 0 -->
+      <Uniform ResDependent="None" Max="1000000.0" Min="-1000000.0" Default="0.8" Inc="0.01" Tooltip="" Row="0" Col="0" Page="1" DisplayName="Face 1 (RGB)" Type="vec3" Name="Face_Color_1" ValueType="Colour">
+         <SubUniform ResDependent="None" Max="1000000.0" Min="-1000000.0" Default="0.8" Inc="0.01" Tooltip="" Row="0" Col="0" Page="1" DisplayName="Face 1 Red" Type="float" Name="Face_Color_1_r">
+         </SubUniform>
+         <SubUniform ResDependent="None" Max="1000000.0" Min="-1000000.0" Default="0.3" Inc="0.01" Tooltip="" Row="1" Col="0" Page="1" DisplayName="Face 1 Green" Type="float" Name="Face_Color_1_g">
+         </SubUniform>
+         <SubUniform ResDependent="None" Max="1000000.0" Min="-1000000.0" Default="0.0" Inc="0.01" Tooltip="" Row="2" Col="0" Page="1" DisplayName="Face 1 Blue" Type="float" Name="Face_Color_1_b">
+         </SubUniform>
+      </Uniform>
+      <Uniform ResDependent="None" Max="1.0" Min="0.0" Default="1.0" Inc="0.01" Tooltip="Alpha for Face 1" Row="3" Col="0" Page="1" DisplayName="Face 1 Alpha" Type="float" Name="Face_Alpha_1">
+      </Uniform>
+      <Uniform Default="0" Tooltip="" Row="4" Col="0" Page="1" DisplayName="Blend Mode" Type="int" Name="Blend_Mode_Face_1" ValueType="Popup">
+         <PopupEntry Title="Normal" Value="0">
+         </PopupEntry>
+         <PopupEntry Title="Add" Value="1">
+         </PopupEntry>
+         <PopupEntry Title="Overlay" Value="2">
+         </PopupEntry>
+         <PopupEntry Title="Screen" Value="3">
+         </PopupEntry>
+         <PopupEntry Title="Subtract" Value="4">
+         </PopupEntry>
+      </Uniform>
+
+      <!-- Face 1 -->
+      <Uniform ResDependent="None" Max="1000000.0" Min="-1000000.0" Default="0.15" Inc="0.01" Tooltip="" Row="0" Col="1" Page="1" DisplayName="Face 2 (RGB)" Type="vec3" Name="Face_Color_2" ValueType="Colour">
+         <SubUniform ResDependent="None" Max="1000000.0" Min="-1000000.0" Default="0.15" Inc="0.01" Tooltip="" Row="0" Col="1" Page="1" DisplayName="Face 2 Red" Type="float" Name="Face_Color_2_r">
+         </SubUniform>
+         <SubUniform ResDependent="None" Max="1000000.0" Min="-1000000.0" Default="0.7" Inc="0.01" Tooltip="" Row="1" Col="1" Page="1" DisplayName="Face 2 Green" Type="float" Name="Face_Color_2_g">
+         </SubUniform>
+         <SubUniform ResDependent="None" Max="1000000.0" Min="-1000000.0" Default="0.1" Inc="0.01" Tooltip="" Row="2" Col="1" Page="1" DisplayName="Face 2 Blue" Type="float" Name="Face_Color_2_b">
+         </SubUniform>
+      </Uniform>
+      <Uniform ResDependent="None" Max="1.0" Min="0.0" Default="1.0" Inc="0.01" Tooltip="Alpha for Face 2" Row="3" Col="1" Page="1" DisplayName="Face 2 Alpha" Type="float" Name="Face_Alpha_2">
+      </Uniform>
+      <Uniform Default="0" Tooltip="" Row="4" Col="1" Page="1" DisplayName="Blend Mode" Type="int" Name="Blend_Mode_Face_2" ValueType="Popup">
+         <PopupEntry Title="Normal" Value="0">
+         </PopupEntry>
+         <PopupEntry Title="Add" Value="1">
+         </PopupEntry>
+         <PopupEntry Title="Overlay" Value="2">
+         </PopupEntry>
+         <PopupEntry Title="Screen" Value="3">
+         </PopupEntry>
+         <PopupEntry Title="Subtract" Value="4">
+         </PopupEntry>
+      </Uniform>
+
+      <!-- Face 2 -->
+      <Uniform ResDependent="None" Max="1000000.0" Min="-1000000.0" Default="0.05" Inc="0.01" Tooltip="" Row="0" Col="2" Page="1" DisplayName="Face 3 (RGB)" Type="vec3" Name="Face_Color_3" ValueType="Colour">
+         <SubUniform ResDependent="None" Max="1000000.0" Min="-1000000.0" Default="0.05" Inc="0.01" Tooltip="" Row="0" Col="2" Page="1" DisplayName="Face 3 Red" Type="float" Name="Face_Color_3_r">
+         </SubUniform>
+         <SubUniform ResDependent="None" Max="1000000.0" Min="-1000000.0" Default="0.6" Inc="0.01" Tooltip="" Row="1" Col="2" Page="1" DisplayName="Face 3 Green" Type="float" Name="Face_Color_3_g">
+         </SubUniform>
+         <SubUniform ResDependent="None" Max="1000000.0" Min="-1000000.0" Default="1.0" Inc="0.01" Tooltip="" Row="2" Col="2" Page="1" DisplayName="Face 3 Blue" Type="float" Name="Face_Color_3_b">
+         </SubUniform>
+      </Uniform>
+      <Uniform ResDependent="None" Max="1.0" Min="0.0" Default="1.0" Inc="0.01" Tooltip="Alpha for Face 3" Row="3" Col="2" Page="1" DisplayName="Face 3 Alpha" Type="float" Name="Face_Alpha_3">
+      </Uniform>
+      <Uniform Default="0" Tooltip="" Row="4" Col="2" Page="1" DisplayName="Blend Mode" Type="int" Name="Blend_Mode_Face_3" ValueType="Popup">
+         <PopupEntry Title="Normal" Value="0">
+         </PopupEntry>
+         <PopupEntry Title="Add" Value="1">
+         </PopupEntry>
+         <PopupEntry Title="Overlay" Value="2">
+         </PopupEntry>
+         <PopupEntry Title="Screen" Value="3">
+         </PopupEntry>
+         <PopupEntry Title="Subtract" Value="4">
+         </PopupEntry>
+      </Uniform>
+
+      <!-- Segments -->
+      <Uniform ResDependent="None" Max="1000000.0" Min="-1000000.0" Default="0.2" Inc="0.01" Tooltip="" Row="0" Col="3" Page="1" DisplayName="Edges (RGB)" Type="vec3" Name="Edge_Color" ValueType="Colour">
+         <SubUniform ResDependent="None" Max="1000000.0" Min="-1000000.0" Default="0.2" Inc="0.01" Tooltip="" Row="0" Col="3" Page="1" DisplayName="Edges Red" Type="float" Name="Edge_Color_r">
+         </SubUniform>
+         <SubUniform ResDependent="None" Max="1000000.0" Min="-1000000.0" Default="0.2" Inc="0.01" Tooltip="" Row="1" Col="3" Page="1" DisplayName="Edges Green" Type="float" Name="Edge_Color_g">
+         </SubUniform>
+         <SubUniform ResDependent="None" Max="1000000.0" Min="-1000000.0" Default="0.8" Inc="0.01" Tooltip="" Row="2" Col="3" Page="1" DisplayName="Edges Blue" Type="float" Name="Edge_Color_b">
+         </SubUniform>
+      </Uniform>
+      <Uniform ResDependent="None" Max="1.0" Min="0.0" Default="1.0" Inc="0.01" Tooltip="Alpha for Edges" Row="3" Col="3" Page="1" DisplayName="Edges Alpha" Type="float" Name="Edge_Alpha">
+      </Uniform>
+      <Uniform Default="0" Tooltip="" Row="4" Col="3" Page="1" DisplayName="Blend Mode" Type="int" Name="Blend_Mode_Edge" ValueType="Popup">
+         <PopupEntry Title="Normal" Value="0">
+         </PopupEntry>
+         <PopupEntry Title="Add" Value="1">
+         </PopupEntry>
+         <PopupEntry Title="Overlay" Value="2">
+         </PopupEntry>
+         <PopupEntry Title="Screen" Value="3">
+         </PopupEntry>
+         <PopupEntry Title="Subtract" Value="4">
+         </PopupEntry>
+      </Uniform>
+
+      <!-- Vertices -->
+      <Uniform ResDependent="None" Max="1000000.0" Min="-1000000.0" Default="1.0" Inc="0.01" Tooltip="" Row="0" Col="4" Page="1" DisplayName="Vertices (RGB)" Type="vec3" Name="Vertex_Color" ValueType="Colour">
+         <SubUniform ResDependent="None" Max="1000000.0" Min="-1000000.0" Default="1.0" Inc="0.01" Tooltip="" Row="0" Col="4" Page="1" DisplayName="Vertices Red" Type="float" Name="Vertex_Color_r">
+         </SubUniform>
+         <SubUniform ResDependent="None" Max="1000000.0" Min="-1000000.0" Default="0.2" Inc="0.01" Tooltip="" Row="1" Col="4" Page="1" DisplayName="Vertices Green" Type="float" Name="Vertex_Color_g">
+         </SubUniform>
+         <SubUniform ResDependent="None" Max="1000000.0" Min="-1000000.0" Default="0.15" Inc="0.01" Tooltip="" Row="2" Col="4" Page="1" DisplayName="Vertices Blue" Type="float" Name="Vertex_Color_b">
+         </SubUniform>
+      </Uniform>
+      <Uniform ResDependent="None" Max="1.0" Min="0.0" Default="1.0" Inc="0.01" Tooltip="Alpha for Vertices" Row="3" Col="4" Page="1" DisplayName="Vertices Alpha" Type="float" Name="Vertex_Alpha">
+      </Uniform>
+      <Uniform Default="0" Tooltip="" Row="4" Col="4" Page="1" DisplayName="Blend Mode" Type="int" Name="Blend_Mode_Vertex" ValueType="Popup">
+         <PopupEntry Title="Normal" Value="0">
+         </PopupEntry>
+         <PopupEntry Title="Add" Value="1">
+         </PopupEntry>
+         <PopupEntry Title="Overlay" Value="2">
+         </PopupEntry>
+         <PopupEntry Title="Screen" Value="3">
+         </PopupEntry>
+         <PopupEntry Title="Subtract" Value="4">
+         </PopupEntry>
+      </Uniform>
+      
+   </Shader>
+   <Page Name="Polyhedra" Page="0">
+      <Col Name="Geometry" Col="0" Page="0">
+      </Col>
+      <Col Name="Visibility" Col="1" Page="0">
+      </Col>
+      <Col Name="Transform" Col="2" Page="0">
+      </Col>
+      <Col Name="Camera" Col="3" Page="0">
+      </Col>
+   </Page>
+   <Page Name="Colors" Page="1">
+      <Col Name="Face 1" Col="0" Page="1">
+      </Col>
+      <Col Name="Face 2" Col="1" Page="1">
+      </Col>
+      <Col Name="Face 3" Col="2" Page="1">
+      </Col>
+      <Col Name="Edges" Col="3" Page="1">
+      </Col>
+      <Col Name="Vertices" Col="4" Page="1">
+      </Col>
+      <Col Name="Blending" Col="5" Page="1">
+      </Col>
+   </Page>
+</ShaderNodePreset>

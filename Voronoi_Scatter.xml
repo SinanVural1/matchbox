@@ -1,0 +1,197 @@
+<ShaderNodePreset 
+    SupportsAdaptiveDegradation="False" 
+    SupportsAction="False"
+    SupportsTransition="False" 
+    SupportsTimeline="False"
+    TimelineUseBack="False" 
+    MatteProvider="False" 
+    CommercialUsePermitted="True" 
+    ShaderType="Matchbox" 
+    SoftwareVersion="2017.0.0" 
+    LimitInputsToTexture="True" 
+    Version="6" 
+    Description="Voronoi-based texture filling with organic motion" 
+    Name="Voronoi Scatter">
+   <Shader Clear="0" GridSubdivision="1" OutputBitDepth="Output" Index="1">
+      <Uniform 
+        Index="0" 
+        NoInput="Error" 
+        Tooltip="" 
+        DisplayName="Source" 
+        InputColor="67, 77, 83" 
+        Mipmaps="False" 
+        GL_TEXTURE_WRAP_T="GL_CLAMP_TO_EDGE" 
+        GL_TEXTURE_WRAP_S="GL_CLAMP_TO_EDGE" 
+        GL_TEXTURE_MAG_FILTER="GL_LINEAR" 
+        GL_TEXTURE_MIN_FILTER="GL_LINEAR" 
+        Type="sampler2D" 
+        Name="front">
+      </Uniform>     
+      
+      <!-- Selection Controls (Col 0) -->
+      <Uniform 
+         Type="vec2" 
+         Name="selection_tl" 
+         DisplayName="Selection TL"
+         Row="0" Col="0" Page="0"
+         ValueType="Position" 
+         IconType="Axis">
+         <SubUniform Index="0" DisplayName="X" Min="0.0" Max="10000.0" Default="0.0" Type="float"/>
+         <SubUniform Index="1" DisplayName="Y" Min="0.0" Max="10000.0" Default="0.0" Type="float"/>
+      </Uniform>
+      <Uniform 
+         Type="vec2" 
+         Name="selection_br" 
+         DisplayName="Selection BR"
+         Row="2" Col="0" Page="0"
+         ValueType="Position" 
+         IconType="Axis">
+         <SubUniform Index="0" DisplayName="X" Min="0.0" Max="10000.0" Default="1.0" Type="float"/>
+         <SubUniform Index="1" DisplayName="Y" Min="0.0" Max="10000.0" Default="1.0" Type="float"/>
+      </Uniform>
+      <Uniform 
+        ResDependent="None" 
+        Max="1.0" 
+        Min="0.0" 
+        Default="False" 
+        Inc="1.0" 
+        Tooltip="Show the source selection box" 
+        Row="4" 
+        Col="0" 
+        Page="0" 
+        Type="bool" 
+        ChannelName="Show Source" 
+        DisplayName="Show Source" 
+        Name="show_source">
+      </Uniform>
+
+      <!-- Scatter Controls (Col 1) -->
+      <Uniform 
+        ResDependent="None" 
+        Max="1000.0" 
+        Min="1.0" 
+        Default="10.0" 
+        Inc="1.0" 
+        Tooltip="Grid Density" 
+        Row="0" 
+        Col="1" 
+        Page="0" 
+        Type="float" 
+        ChannelName="Density" 
+        DisplayName="Density" 
+        Name="grid_density">
+      </Uniform>
+      <Uniform 
+        ResDependent="None" 
+        Max="1.0" 
+        Min="0.0" 
+        Default="0.5" 
+        Inc="0.01" 
+        Tooltip="Randomness of Position" 
+        Row="1" 
+        Col="1" 
+        Page="0" 
+        Type="float" 
+        ChannelName="Scatter" 
+        DisplayName="Scatter" 
+        Name="scatter_amount">
+      </Uniform>
+      <Uniform 
+        ResDependent="None" 
+        Max="180.0" 
+        Min="0.0" 
+        Default="0.0" 
+        Inc="1.0" 
+        Tooltip="Max Random Rotation in Degrees" 
+        Row="2" 
+        Col="1" 
+        Page="0" 
+        Type="float" 
+        ChannelName="Rotation" 
+        DisplayName="Max Rotation" 
+        Name="max_rotation">
+      </Uniform>
+      <Uniform 
+        ResDependent="None" 
+        Max="10.0" 
+        Min="0.1" 
+        Default="1.0" 
+        Inc="0.1" 
+        Tooltip="Texture fill scale" 
+        Row="3" 
+        Col="1" 
+        Page="0" 
+        Type="float" 
+        ChannelName="Fill Scale" 
+        DisplayName="Fill Scale" 
+        Name="fill_scale">
+      </Uniform>
+      <Uniform 
+        ResDependent="None" 
+        Max="1.0" 
+        Min="0.0" 
+        Default="0.2" 
+        Inc="0.01" 
+        Tooltip="Scale Random Variance" 
+        Row="4" 
+        Col="1" 
+        Page="0" 
+        Type="float" 
+        ChannelName="Scale Var" 
+        DisplayName="Scale Variance" 
+        Name="scale_variance">
+      </Uniform>
+      <Uniform 
+        ResDependent="None" 
+        Max="1000.0" 
+        Min="0.0" 
+        Default="0.0" 
+        Inc="0.1" 
+        Tooltip="Softness of Voronoi borders" 
+        Row="5" 
+        Col="1" 
+        Page="0" 
+        Type="float" 
+        ChannelName="Softness" 
+        DisplayName="Border Softness" 
+        Name="border_softness">
+      </Uniform>
+      <Uniform 
+        ResDependent="None" 
+        Max="32.0" 
+        Min="1.0" 
+        Default="1.0" 
+        Inc="1.0" 
+        Tooltip="Super-Sampling AA Samples" 
+        Row="6" 
+        Col="1" 
+        Page="0" 
+        Type="int" 
+        ChannelName="Samples" 
+        DisplayName="Samples" 
+        Name="samples">
+      </Uniform>
+      <Uniform 
+        ResDependent="None" 
+        Max="10000.0" 
+        Min="0.0" 
+        Default="1.0" 
+        Inc="0.01" 
+        Tooltip="Evolution/Time Seed" 
+        Row="7" 
+        Col="1" 
+        Page="0" 
+        Type="float" 
+        ChannelName="Seed" 
+        DisplayName="Seed / Time" 
+        Name="seed">
+      </Uniform>
+      
+   </Shader>
+   <Page Name="Main" Page="0">
+      <Col Name="Selection" Col="0" Page="0">
+      </Col>
+      <Col Name="Scatter" Col="1" Page="0">
+      </Col>
+   </Page>
+</ShaderNodePreset>

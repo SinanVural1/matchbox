@@ -1,0 +1,125 @@
+<ShaderNodePreset 
+    SupportsAdaptiveDegradation="False" 
+    SupportsAction="False"
+    SupportsTransition="False" 
+    SupportsTimeline="False"
+    TimelineUseBack="False" 
+    MatteProvider="False" 
+    CommercialUsePermitted="True" 
+    ShaderType="Matchbox" 
+    SoftwareVersion="2017.0.0" 
+    LimitInputsToTexture="True" 
+    Version="4" 
+    Description="Directional Blur with Selective Matte" 
+    Name="Directional Blur Advanced">
+   <Shader Clear="0" GridSubdivision="1" OutputBitDepth="Output" Index="1">
+      <Uniform 
+        Index="0" 
+        NoInput="Error" 
+        Tooltip="" 
+        DisplayName="Source" 
+        InputColor="67, 77, 83" 
+        Mipmaps="False" 
+        GL_TEXTURE_WRAP_T="GL_CLAMP_TO_EDGE" 
+        GL_TEXTURE_WRAP_S="GL_CLAMP_TO_EDGE" 
+        GL_TEXTURE_MAG_FILTER="GL_LINEAR" 
+        GL_TEXTURE_MIN_FILTER="GL_LINEAR" 
+        Type="sampler2D" 
+        Name="front">
+      </Uniform>   
+      <Uniform 
+        Index="1" 
+        NoInput="White" 
+        Tooltip="Matte input to select blur source" 
+        DisplayName="Matte" 
+        InputColor="255, 255, 255" 
+        Mipmaps="False" 
+        GL_TEXTURE_WRAP_T="GL_CLAMP_TO_EDGE" 
+        GL_TEXTURE_WRAP_S="GL_CLAMP_TO_EDGE" 
+        GL_TEXTURE_MAG_FILTER="GL_LINEAR" 
+        GL_TEXTURE_MIN_FILTER="GL_LINEAR" 
+        Type="sampler2D" 
+        Name="matte"
+        InputType="Selective"> 
+      </Uniform>   
+      <Uniform 
+        ResDependent="None" 
+        Max="100.0" 
+        Min="0.0" 
+        Default="0.0" 
+        Inc="0.01" 
+        Tooltip="Length of the blur" 
+        Row="0" 
+        Col="0" 
+        Page="0" 
+        Type="float" 
+        ChannelName="Length" 
+        DisplayName="Length" 
+        Name="smear_length">
+      </Uniform>   
+      <Uniform 
+        ResDependent="None" 
+        Max="360.0" 
+        Min="-360.0" 
+        Default="0.0" 
+        Inc="1.0" 
+        Tooltip="Angle of the blur in degrees" 
+        Row="1" 
+        Col="0" 
+        Page="0" 
+        Type="float" 
+        ChannelName="Angle" 
+        DisplayName="Angle" 
+        Name="smear_angle">
+      </Uniform>
+      <Uniform 
+        ResDependent="None" 
+        Max="100.0" 
+        Min="1.0" 
+        Default="30.0" 
+        Inc="1.0" 
+        Tooltip="Number of blur samples" 
+        Row="2" 
+        Col="0" 
+        Page="0" 
+        Type="int" 
+        ChannelName="Samples" 
+        DisplayName="Samples" 
+        Name="samples">
+      </Uniform>
+      <Uniform 
+        ResDependent="None" 
+        Max="1.0" 
+        Min="0.0" 
+        Default="0.0" 
+        Inc="0.01" 
+        Tooltip="Fade out samples over distance" 
+        Row="3" 
+        Col="0" 
+        Page="0" 
+        Type="float" 
+        ChannelName="Falloff" 
+        DisplayName="Falloff" 
+        Name="falloff">
+      </Uniform>
+      <Uniform 
+        ResDependent="None" 
+        Max="100.0" 
+        Min="0.0" 
+        Default="1.0" 
+        Inc="0.1" 
+        Tooltip="Brightness gain for the blur" 
+        Row="4" 
+        Col="0" 
+        Page="0" 
+        Type="float" 
+        ChannelName="Gain" 
+        DisplayName="Gain" 
+        Name="gain">
+      </Uniform>
+   </Shader>
+   <Page Name="Main" Page="0">
+      <Col Name="Controls" Col="0" Page="0">
+      </Col>
+   </Page>
+</ShaderNodePreset>
