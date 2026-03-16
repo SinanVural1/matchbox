@@ -1,0 +1,764 @@
+<ShaderNodePreset
+    Description="This Matchbox shader performs a linear - or perceptually linear - colour-grade, defined by up to three colour-vector mappings.
+
+Each vector mapping is defined by a source-colour and exactly one of three possible methods for assigning a target-colour, as determined by the individual Vector Modes:
+&lt;Colour&gt; maps the source colour to the specified target colour,
+&lt;Shift&gt; determines the target colour through an additive offset to the source colour, and
+&lt;Gain&gt; multiplies the source colour by a given triplet as the target colour.
+Alternatively, if fewer than three vectors are required, each vector can be disabled individually.
+In such cases, the orthogonal complement to the basis spanned by the active source colour vectors is mapped to itself. Note that in general, this orthogonal complement depends on the working colour-space, thus even if source and target colours for the active vector mappings are identical (in true colour, not value-triplets), the results may still differ.
+However, if all three vector mappings are active and the source and target colours are kept consistent, the transformation yields the same result for any scene-linear working colour-space.
+
+Each vector can optionally be normalised in luminance (active by default), which is calculated with the luma coefficients given by &lt;W_R&gt; and &lt;W_B&gt; (assuming ACEScg by default). This can be useful for shifting chromatics iso-luminance with the provided &lt;Shift&gt;- and &lt;Gain&gt;-modes.
+
+When enabling &lt;Perceptual Processing&gt;, the shader operates according to the Oklab colour appearance model; most notably using the nonlinear response, and Euclidean perceptual colour-distances.
+For correct transformations to this model, the working colour-space (of Front as well as Result) has to be set via &lt;Working CS&gt;.
+By default, the target vector controls remain in working-space colourimetry, and results should be similar for small, well-conditioned adjustments. However, the Shift- and Gain controls can also be switched to Oklab Lab representation by activating &lt;Perceptual Shift and Gain&gt;. While &lt;Shift&gt; works mostly analogous to RGB-colour-shifts, &lt;Gain&gt; in Lab behaves noticeably differently for chromatic changes.
+Colour selectors (for vector sources and targets) always are relative to the working colour-space.
+Note that in perceptual processing, luminance normalization for vectors does not rely on the &lt;W_R&gt; and &lt;W_B&gt; coefficients but uses the Oklab lightness, and thus may produce slightly different results.
+
+Finally, the image saturation can be adjusted via &lt;Post-Saturation&gt; - applied after the vector-based grade.
+For native processing, the luma coefficients &lt;W_R&gt; and &lt;W_B&gt; are used to calculate saturation; while for perceptual mode, the adjustment is applied in nonlinear ab chromatics.
+
+Internally, a single colour matrix is computed, comprising the entire grade. For ill-conditioned source-bases - that is: similar source colours - this matrix might also get ill-conditioned, leading to extreme colour-shifts for image colours further to source-vectors. Even for only slight adjustments in target colours.
+Further, linearly-dependent source-colours lead to undefined results.
+Conversely, if the source colours are spaced sensibly far apart, the entire transformation is well-conditioned.
+For enhanced accuracy, this matrix and the intermediate values are always processed in double precision arithmetic; yet since instead of computing the matrix for each pixel, an interposed data sampler is used, the computational overhead is constant and insignificant.
+If even higher accuracy is needed, &lt;Double Precision Processing&gt; can be enabled, at the cost of performance.
+This causes the application of the colour matrix on a pixel-basis (as well as the perceptual transformations) to be processed in double precision.
+While for real-world images and use cases, the rounding error is negligible for standard processing; full double-precision can be useful if correctly-rounded Float32 results are paramount.
+
+Note that this shader does not perform any image scaling or reformatting, so the operation may be incorrect if the result and input image formats don't match.
+It is recommended to leave the canvas resolution as &lt;Same As Input 1&gt;.
+
+This shader is licensed under the terms of the MIT license.
+
+For questions contact:
+nobbl211@gmail.com"
+    Name="TriGrade"
+    HelpLink=""
+    LimitInputsToTexture="True"
+    MatteProvider="False"
+    SupportsAction="True"
+    SupportsTransition="False"
+    SupportsAdaptiveDegradation="False"
+    CommercialUsePermitted="True"
+    ShaderType="Matchbox"
+    SoftwareVersion="2026.1"
+    TimelineUseBack="False"
+    SupportsTimeline="True"
+    Version="0.4">
+    <Shader
+        Index="1"
+        OutputBitDepth="Float32"
+        OutputWidth="5"
+        OutputHeight="1">
+        <Uniform
+            Type="bool"
+            Tooltip="toggles perceptual processing modeled using Oklab"
+            DisplayName="Perceptual Processing"
+            Name="perceptual"
+            Page="0"
+            Col="0"
+            Row="0"
+            Default="False">
+        </Uniform>
+        <Uniform
+            Type="uint"
+            Tooltip="selector for the working colour-space"
+            DisplayName="Working CS"
+            Name="working_cs"
+            Page="0"
+            Col="0"
+            Row="1"
+            Default="0"
+            ValueType="Popup"
+            UIConditionSource="perceptual"
+            UIConditionValue="True"
+            UIConditionType="Disable">
+            <PopupEntry
+                Title="ACEScg"
+                Value="0">
+            </PopupEntry>
+            <PopupEntry
+                Title="ACES2065-1"
+                Value="1">
+            </PopupEntry>
+            <PopupEntry
+                Title="linear Rec.709"
+                Value="2">
+            </PopupEntry>
+            <PopupEntry
+                Title="linear Rec.2020"
+                Value="3">
+            </PopupEntry>
+            <PopupEntry
+                Title="linear P3-D65"
+                Value="4">
+            </PopupEntry>
+            <PopupEntry
+                Title="linear AWG4"
+                Value="5">
+            </PopupEntry>
+            <PopupEntry
+                Title="linear RWG"
+                Value="6">
+            </PopupEntry>
+            <PopupEntry
+                Title="CIE XYZ-D65"
+                Value="7">
+            </PopupEntry>
+            <PopupEntry
+                Title="mRGB"
+                Value="8">
+            </PopupEntry>
+        </Uniform>
+        <Uniform
+            Type="bool"
+            Tooltip="if enabled, Shift and Gain vector mapping controls use perceptual colours,
+otherwise, the native colour-space is used to compute grading vectors,
+note that this does not affect how the colour transformation is applied"
+            DisplayName="Perceptual Shift and Gain"
+            Name="perceptual_controls"
+            Col="0"
+            Row="2"
+            Page="0"
+            Default="False"
+            UIConditionSource="perceptual"
+            UIConditionValue="True"
+            UIConditionType="Disable">
+        </Uniform>
+        <Uniform
+            Type="float"
+            Tooltip="saturation adjustment to be applied after the vector-based grade"
+            DisplayName="Post-Saturation"
+            ChannelName="post_saturation"
+            Name="post_saturation"
+            Page="0"
+            Col="0"
+            Row="3"
+            Default="1.0"
+            Inc="0.001"
+            Max="10000000.0"
+            Min="-10000000.0"
+            ResDependant="None">
+        </Uniform>
+        <Uniform
+            Type="bool"
+            Tooltip="toggles double-precision processing for applying the grade"
+            DisplayName="Double Precision Processing"
+            Name="double_precision"
+            Page="0"
+            Col="0"
+            Row="4"
+            Default="False">
+        </Uniform>
+        <Uniform
+            Type="uint"
+            Tooltip="sets the mode in which the first vector is mapped"
+            DisplayName="Vector 1 Mode"
+            Name="vec_1_mode"
+            Page="0"
+            Col="1"
+            Row="0"
+            Default="3"
+            ValueType="Popup">
+            <PopupEntry
+                Title="Disable"
+                Value="0">
+            </PopupEntry>
+            <PopupEntry
+                Title="Colour"
+                Value="1">
+            </PopupEntry>
+            <PopupEntry
+                Title="Shift"
+                Value="2">
+            </PopupEntry>
+            <PopupEntry
+                Title="Gain"
+                Value="3">
+            </PopupEntry>
+        </Uniform>
+        <Uniform
+            Type="uint"
+            Tooltip="sets the mode in which the second vector is mapped"
+            DisplayName="Vector 2 Mode"
+            Name="vec_2_mode"
+            Page="0"
+            Col="1"
+            Row="1"
+            Default="0"
+            ValueType="Popup">
+            <PopupEntry
+                Title="Disable"
+                Value="0">
+            </PopupEntry>
+            <PopupEntry
+                Title="Colour"
+                Value="1">
+            </PopupEntry>
+            <PopupEntry
+                Title="Shift"
+                Value="2">
+            </PopupEntry>
+            <PopupEntry
+                Title="Gain"
+                Value="3">
+            </PopupEntry>
+        </Uniform>
+        <Uniform
+            Type="uint"
+            Tooltip="sets the mode in which the third vector is mapped"
+            DisplayName="Vector 3 Mode"
+            Name="vec_3_mode"
+            Page="0"
+            Col="1"
+            Row="2"
+            Default="0"
+            ValueType="Popup">
+            <PopupEntry
+                Title="Disable"
+                Value="0">
+            </PopupEntry>
+            <PopupEntry
+                Title="Colour"
+                Value="1">
+            </PopupEntry>
+            <PopupEntry
+                Title="Shift"
+                Value="2">
+            </PopupEntry>
+            <PopupEntry
+                Title="Gain"
+                Value="3">
+            </PopupEntry>
+        </Uniform>
+        <Uniform
+            Type="float"
+            Tooltip="weight of the red channel towards luminance"
+            DisplayName="W_R"
+            ChannelName="w_r"
+            Name="w_r"
+            Page="0"
+            Col="1"
+            Row="4"
+            Default="0.2722287168"
+            Inc="0.001"
+            Max="10000000.0"
+            Min="-10000000.0"
+            ResDependant="None"
+            UIConditionSource="perceptual"
+            UIConditionValue="False"
+            UIConditionType="Disable">
+        </Uniform>
+        <Uniform
+            Type="bool"
+            Tooltip="normalise the first vector mapping in luminance,
+or conditionally: perceptual lightness"
+            DisplayName="Normalise Vector 1"
+            Name="vec_1_norm"
+            Col="2"
+            Row="0"
+            Page="0"
+            Default="True"
+            UIConditionSource="vec_1_mode"
+            UIConditionValue="0"
+            UIConditionInvert="True"
+            UIConditionType="Disable">
+        </Uniform>
+        <Uniform
+            Type="bool"
+            Tooltip="normalise the second vector mapping in luminance,
+or conditionally: perceptual lightness"
+            DisplayName="Normalise Vector 2"
+            Name="vec_2_norm"
+            Col="2"
+            Row="1"
+            Page="0"
+            Default="True"
+            UIConditionSource="vec_2_mode"
+            UIConditionValue="0"
+            UIConditionInvert="True"
+            UIConditionType="Disable">
+        </Uniform>
+        <Uniform
+            Type="bool"
+            Tooltip="normalise the third vector mapping in luminance,
+or conditionally: perceptual lightness"
+            DisplayName="Normalise Vector 3"
+            Name="vec_3_norm"
+            Col="2"
+            Row="2"
+            Page="0"
+            Default="True"
+            UIConditionSource="vec_3_mode"
+            UIConditionValue="0"
+            UIConditionInvert="True"
+            UIConditionType="Disable">
+        </Uniform>
+        <Uniform
+            Type="float"
+            Tooltip="weight of the blue channel towards luminance"
+            DisplayName="W_B"
+            ChannelName="w_b"
+            Name="w_b"
+            Page="0"
+            Col="2"
+            Row="4"
+            Default="0.057987831073112"
+            Inc="0.001"
+            Max="10000000.0"
+            Min="-10000000.0"
+            ResDependant="None"
+            UIConditionSource="perceptual"
+            UIConditionValue="False"
+            UIConditionType="Disable">
+        </Uniform>
+        <Uniform
+            Type="vec3"
+            Tooltip="first vector target colour"
+            DisplayName="Vector 1 Target"
+            ChannelName="vec_1_tar_c"
+            Name="vec_1_tar_c"
+            Page="0"
+            Col="3"
+            Row="0"
+            IconType="None"
+            ValueType="Colour"
+            UIConditionSource="vec_1_mode"
+            UIConditionValue="1"
+            UIConditionType="Hide">
+            <SubUniform
+                Default="0.0">
+            </SubUniform>
+            <SubUniform
+                Default="0.5">
+            </SubUniform>
+            <SubUniform
+                Default="0.0">
+            </SubUniform>
+        </Uniform>
+        <Uniform
+            Type="vec3"
+            Tooltip="first vector target offset in centi-units"
+            ChannelName="vec_1_tar_o"
+            Name="vec_1_tar_o"
+            Page="0"
+            Col="3"
+            Row="0"
+            Inc="0.02"
+            IconType="None"
+            ValueType="ColourWheelRGBOffset"
+            UIConditionSource="vec_1_mode"
+            UIConditionValue="2"
+            UIConditionType="Hide">
+            <SubUniform
+                ChannelName="cR"
+                Default="0.0"
+                Max="1000000000.0"
+                Min="-1000000000.0"
+                ResDependant="None">
+            </SubUniform>
+            <SubUniform
+                ChannelName="cG"
+                Default="0.0"
+                Max="1000000000.0"
+                Min="-1000000000.0"
+                ResDependant="None">
+            </SubUniform>
+            <SubUniform
+                ChannelName="cB"
+                Default="0.0"
+                Max="1000000000.0"
+                Min="-1000000000.0"
+                ResDependant="None">
+            </SubUniform>
+        </Uniform>
+        <Uniform
+            Type="vec3"
+            Tooltip="first vector target gain in deci-units"
+            ChannelName="vec_1_tar_g"
+            Name="vec_1_tar_g"
+            Page="0"
+            Col="3"
+            Row="0"
+            Inc="0.01"
+            IconType="None"
+            ValueType="ColourWheelRGBSlope"
+            UIConditionSource="vec_1_mode"
+            UIConditionValue="3"
+            UIConditionType="Hide">
+            <SubUniform
+                ChannelName="dR"
+                Default="10.0"
+                Max="100000000.0"
+                Min="-100000000.0"
+                ResDependant="None">
+            </SubUniform>
+            <SubUniform
+                ChannelName="dG"
+                Default="10.0"
+                Max="100000000.0"
+                Min="-100000000.0"
+                ResDependant="None">
+            </SubUniform>
+            <SubUniform
+                ChannelName="dB"
+                Default="10.0"
+                Max="100000000.0"
+                Min="-100000000.0"
+                ResDependant="None">
+            </SubUniform>
+        </Uniform>
+        <Uniform
+            Type="vec3"
+            Tooltip="first vector source colour"
+            DisplayName="Vector 1 Source"
+            ChannelName="vec_1_src"
+            Name="vec_1_src"
+            Page="0"
+            Col="3"
+            Row="4"
+            IconType="None"
+            ValueType="Colour"
+            UIConditionSource="vec_1_mode"
+            UIConditionValue="0"
+            UIConditionInvert="True"
+            UIConditionType="Disable">
+            <SubUniform
+                Default="0.0">
+            </SubUniform>
+            <SubUniform
+                Default="0.5">
+            </SubUniform>
+            <SubUniform
+                Default="0.0">
+            </SubUniform>
+        </Uniform>
+        <Uniform
+            Type="vec3"
+            Tooltip="second vector target colour"
+            DisplayName="Vector 2 Target"
+            ChannelName="vec_2_tar_c"
+            Name="vec_2_tar_c"
+            Page="0"
+            Col="4"
+            Row="0"
+            IconType="None"
+            ValueType="Colour"
+            UIConditionSource="vec_2_mode"
+            UIConditionValue="1"
+            UIConditionType="Hide">
+            <SubUniform
+                Default="0.8363">
+            </SubUniform>
+            <SubUniform
+                Default="0.4934">
+            </SubUniform>
+            <SubUniform
+                Default="0.2695">
+            </SubUniform>
+        </Uniform>
+        <Uniform
+            Type="vec3"
+            Tooltip="second vector target offset in centi-units"
+            ChannelName="vec_2_tar_o"
+            Name="vec_2_tar_o"
+            Page="0"
+            Col="4"
+            Row="0"
+            Inc="0.02"
+            IconType="None"
+            ValueType="ColourWheelRGBOffset"
+            UIConditionSource="vec_2_mode"
+            UIConditionValue="2"
+            UIConditionType="Hide">
+            <SubUniform
+                ChannelName="cR"
+                Default="0.0"
+                Max="1000000000.0"
+                Min="-1000000000.0"
+                ResDependant="None">
+            </SubUniform>
+            <SubUniform
+                ChannelName="cG"
+                Default="0.0"
+                Max="1000000000.0"
+                Min="-1000000000.0"
+                ResDependant="None">
+            </SubUniform>
+            <SubUniform
+                ChannelName="cB"
+                Default="0.0"
+                Max="1000000000.0"
+                Min="-1000000000.0"
+                ResDependant="None">
+            </SubUniform>
+        </Uniform>
+        <Uniform
+            Type="vec3"
+            Tooltip="second vector target gain in deci-units"
+            ChannelName="vec_2_tar_g"
+            Name="vec_2_tar_g"
+            Page="0"
+            Col="4"
+            Row="0"
+            Inc="0.01"
+            IconType="None"
+            ValueType="ColourWheelRGBSlope"
+            UIConditionSource="vec_2_mode"
+            UIConditionValue="3"
+            UIConditionType="Hide">
+            <SubUniform
+                ChannelName="dR"
+                Default="10.0"
+                Max="100000000.0"
+                Min="-100000000.0"
+                ResDependant="None">
+            </SubUniform>
+            <SubUniform
+                ChannelName="dG"
+                Default="10.0"
+                Max="100000000.0"
+                Min="-100000000.0"
+                ResDependant="None">
+            </SubUniform>
+            <SubUniform
+                ChannelName="dB"
+                Default="10.0"
+                Max="100000000.0"
+                Min="-100000000.0"
+                ResDependant="None">
+            </SubUniform>
+        </Uniform>
+        <Uniform
+            Type="vec3"
+            Tooltip="second vector source colour"
+            DisplayName="Vector 2 Source"
+            ChannelName="vec_2_src"
+            Name="vec_2_src"
+            Page="0"
+            Col="4"
+            Row="4"
+            IconType="None"
+            ValueType="Colour"
+            UIConditionSource="vec_2_mode"
+            UIConditionValue="0"
+            UIConditionInvert="True"
+            UIConditionType="Disable">
+            <SubUniform
+                Default="0.8363">
+            </SubUniform>
+            <SubUniform
+                Default="0.4934">
+            </SubUniform>
+            <SubUniform
+                Default="0.2695">
+            </SubUniform>
+        </Uniform>
+        <Uniform
+            Type="vec3"
+            Tooltip="third vector target colour"
+            DisplayName="Vector 3 Target"
+            ChannelName="vec_3_tar_c"
+            Name="vec_3_tar_c"
+            Page="0"
+            Col="5"
+            Row="0"
+            IconType="None"
+            ValueType="Colour"
+            UIConditionSource="vec_3_mode"
+            UIConditionValue="1"
+            UIConditionType="Hide">
+            <SubUniform
+                Default="1.0">
+            </SubUniform>
+            <SubUniform
+                Default="1.0">
+            </SubUniform>
+            <SubUniform
+                Default="1.0">
+            </SubUniform>
+        </Uniform>
+        <Uniform
+            Type="vec3"
+            Tooltip="third vector target offset in centi-units"
+            ChannelName="vec_3_tar_o"
+            Name="vec_3_tar_o"
+            Page="0"
+            Col="5"
+            Row="0"
+            Inc="0.02"
+            IconType="None"
+            ValueType="ColourWheelRGBOffset"
+            UIConditionSource="vec_3_mode"
+            UIConditionValue="2"
+            UIConditionType="Hide">
+            <SubUniform
+                ChannelName="cR"
+                Default="0.0"
+                Max="1000000000.0"
+                Min="-1000000000.0"
+                ResDependant="None">
+            </SubUniform>
+            <SubUniform
+                ChannelName="cG"
+                Default="0.0"
+                Max="1000000000.0"
+                Min="-1000000000.0"
+                ResDependant="None">
+            </SubUniform>
+            <SubUniform
+                ChannelName="cB"
+                Default="0.0"
+                Max="1000000000.0"
+                Min="-1000000000.0"
+                ResDependant="None">
+            </SubUniform>
+        </Uniform>
+        <Uniform
+            Type="vec3"
+            Tooltip="third vector target gain in deci-units"
+            ChannelName="vec_3_tar_g"
+            Name="vec_3_tar_g"
+            Page="0"
+            Col="5"
+            Row="0"
+            Inc="0.01"
+            IconType="None"
+            ValueType="ColourWheelRGBSlope"
+            UIConditionSource="vec_3_mode"
+            UIConditionValue="3"
+            UIConditionType="Hide">
+            <SubUniform
+                ChannelName="dR"
+                Default="10.0"
+                Max="100000000.0"
+                Min="-100000000.0"
+                ResDependant="None">
+            </SubUniform>
+            <SubUniform
+                ChannelName="dG"
+                Default="10.0"
+                Max="100000000.0"
+                Min="-100000000.0"
+                ResDependant="None">
+            </SubUniform>
+            <SubUniform
+                ChannelName="dB"
+                Default="10.0"
+                Max="100000000.0"
+                Min="-100000000.0"
+                ResDependant="None">
+            </SubUniform>
+        </Uniform>
+        <Uniform
+            Type="vec3"
+            Tooltip="third vector source colour"
+            DisplayName="Vector 3 Source"
+            ChannelName="vec_3_src"
+            Name="vec_3_src"
+            Page="0"
+            Col="5"
+            Row="4"
+            IconType="None"
+            ValueType="Colour"
+            UIConditionSource="vec_3_mode"
+            UIConditionValue="0"
+            UIConditionInvert="True"
+            UIConditionType="Disable">
+            <SubUniform
+                Default="1.0">
+            </SubUniform>
+            <SubUniform
+                Default="1.0">
+            </SubUniform>
+            <SubUniform
+                Default="1.0">
+            </SubUniform>
+        </Uniform>
+    </Shader>
+    <Shader
+        Index="2"
+        OutputBitDepth="Output">
+        <Uniform
+            Type="sampler2D"
+            DisplayName="Front"
+            Name="front"
+            Index="0"
+            NoInput="Error"
+            Mipmaps="False"
+            InputType="Front">
+        </Uniform>
+        <Uniform
+            Type="sampler2D"
+            DisplayName="Selective"
+            Name="selective"
+            Index="1"
+            NoInput="White"
+            Mipmaps="False"
+            InputType="Selective"
+            InputColor="40,100,100">
+        </Uniform>
+        <Uniform
+            Type="sampler2D"
+            Name="adsk_results_pass1"
+            Mipmaps="False">
+        </Uniform>
+        <Uniform
+            Type="bool"
+            Name="perceptual">
+            <Duplicate>
+            </Duplicate>
+        </Uniform>
+        <Uniform
+            Type="uint"
+            Name="working_cs">
+            <Duplicate>
+            </Duplicate>
+        </Uniform>
+        <Uniform
+            Type="bool"
+            Name="double_precision">
+            <Duplicate>
+            </Duplicate>
+        </Uniform>
+    </Shader>
+    <Page
+        Name="Controls"
+        ColName0_2="Settings"
+        ColName3_5="Vectors"
+        Page="0">
+        <Col
+            Name="Settings"
+            Col="0"
+            Page="0">
+        </Col>
+        <Col
+            Name="Vector Modes"
+            Col="1"
+            Page="0">
+        </Col>
+        <Col
+            Name="Normalization"
+            Col="2"
+            Page="0">
+        </Col>
+        <Col
+            Name="Vector 1"
+            Col="3"
+            Page="0">
+        </Col>
+        <Col
+            Name="Vector 2"
+            Col="4"
+            Page="0">
+        </Col>
+        <Col
+            Name="Vector 3"
+            Col="5"
+            Page="0">
+        </Col>
+    </Page>
+</ShaderNodePreset>
