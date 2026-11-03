@@ -29,8 +29,7 @@ uniform float target1;
 uniform float target2;
 
 uniform float sampleRadius;    // Averaging radius in pixels
-uniform float minSep;          // Denominator guard
-uniform float maxGain;         // Hard limit on the solved scale factor
+uniform float minSep;          // Fraction of sample depth below which the solve fades
 uniform bool  showMarkers;     // Draw the sample footprints
 
 // ---- Output range selection ----
@@ -110,13 +109,15 @@ void main(void)
     float s1 = sampleDepth(uv1);
     float s2 = sampleDepth(uv2);
 
-    // Exact solve while the samples are at least minSep apart, so swapping the
-    // points gives a true inverted map. Below minSep the gain fades through
-    // zero, so noise swapping s1 and s2 as the points converge passes through
-    // a flat map rather than snapping straight from +maxGain to -maxGain.
-    float den  = s1 - s2;
-    float gain = (target1 - target2) / max(abs(den), minSep);
-    gain = clamp(gain, -maxGain, maxGain) * clamp(den / minSep, -1.0, 1.0);
+    // Exact solve while the samples are far enough apart, so swapping the points
+    // gives a true inverted map. The limit is a fraction of the samples' own
+    // depth because estimator output has no fixed scale. Below it the gain fades
+    // through zero, so noise swapping s1 and s2 as the points converge passes
+    // through a flat map rather than snapping straight to an inverted one.
+    float den   = s1 - s2;
+    float limit = max(minSep * max(abs(s1), abs(s2)), 0.00001);
+    float gain  = (target1 - target2) / max(abs(den), limit)
+                * clamp(den / limit, -1.0, 1.0);
 
     float d    = texture2D(front, uv).r;
     float stab = (d - s1) * gain + target1;
