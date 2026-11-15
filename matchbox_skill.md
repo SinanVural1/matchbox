@@ -565,7 +565,7 @@ float lwidth = max(1.0 / adsk_result_w, 1.0 / adsk_result_h);
 
 ## 7. Sinan's Shader Library
 
-Current shaders, each in its own folder under `~/GitHub/matchbox/shaders/` (for example `shaders/sv_hypot/sv_hypot.glsl`):
+Current shaders, each in its own folder under `~/GitHub/matchbox/shaders/` (for example `shaders/sv_Hypot/sv_Hypot.glsl`):
 
 | File | Description |
 |---|---|
@@ -573,11 +573,11 @@ Current shaders, each in its own folder under `~/GitHub/matchbox/shaders/` (for 
 | `sv_Triangle_Mosaic` | Triangle tessellation mosaic with AA, rotation, luma scaling |
 | `sv_Polyhedra` | 3D regular polyhedra renderer with camera, colour, blend mode controls |
 | `sv_Voronoi_Scatter` | Voronoi-distributed texture patch scattering with icon positioners |
-| `sv_directional_blur` | Directional blur with falloff, sample count, matte-driven selective |
-| `sv_hypot` | Two-input hypot blend mode with strength control |
-| `sv_promist` | Pro-Mist analog filter emulation — blooms/darkens the blacks |
-| `sv_lightning` | Animated lightning bolt with branch controls and curve-driven pointiness |
-| `sv_depth_temporal_stabilizer` | Two-point temporal stabilizer for ML depth maps, with Near/Far and Range output modes |
+| `sv_Directional_Blur` | Directional blur with falloff, sample count, matte-driven selective |
+| `sv_Hypot` | Two-input hypot blend mode with strength control |
+| `sv_Promist` | Pro-Mist analog filter emulation — blooms/darkens the blacks |
+| `sv_Lightning` | Animated lightning bolt with branch controls and curve-driven pointiness |
+| `sv_Depth_Temporal_Stabilizer` | Two-point temporal stabilizer for ML depth maps, with Near/Far and Range output modes |
 
 ---
 
