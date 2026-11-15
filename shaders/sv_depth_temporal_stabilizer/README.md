@@ -4,7 +4,7 @@ A Matchbox shader for Autodesk Flame that removes the frame-to-frame flicker fro
 
 Relative depth models such as Depth Anything V2 (for example, running in Flame's ML Inference node) don't output a fixed scale. Each frame can come out slightly brighter, darker or more contrasty than the last, so the depth map pumps over time even when nothing in the shot moves. This shader locks the map down using two points you choose: on every frame it measures the depth at those points and rescales the whole map so they always read the values you set.
 
-**[Download the shader (ZIP)](https://github.com/SinanVural1/matchbox/raw/main/shaders/sv_depth_temporal_stabilizer.zip)**
+**[Download the shader (ZIP)](https://github.com/SinanVural1/matchbox/raw/main/shaders/sv_depth_temporal_stabilizer/sv_depth_temporal_stabilizer.zip)**
 
 ## Video introduction
 

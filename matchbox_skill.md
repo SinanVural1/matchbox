@@ -565,7 +565,7 @@ float lwidth = max(1.0 / adsk_result_w, 1.0 / adsk_result_h);
 
 ## 7. Sinan's Shader Library
 
-Current shaders in `~/GitHub/matchbox/shaders/`:
+Current shaders, each in its own folder under `~/GitHub/matchbox/shaders/` (for example `shaders/sv_hypot/sv_hypot.glsl`):
 
 | File | Description |
 |---|---|
