@@ -1,3 +1,7 @@
+// sv_Directional_Blur
+// Copyright (c) 2026 Sinan Vural. MIT License.
+// https://github.com/SinanVural1/matchbox/tree/main/shaders/sv_Directional_Blur
+
 uniform sampler2D front;
 uniform sampler2D matte;
 uniform float adsk_result_w;

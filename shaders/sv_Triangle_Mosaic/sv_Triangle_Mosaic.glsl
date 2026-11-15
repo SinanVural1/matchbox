@@ -1,6 +1,10 @@
+// sv_Triangle_Mosaic
+// Copyright (c) 2026 Sinan Vural. MIT License.
+// https://github.com/SinanVural1/matchbox/tree/main/shaders/sv_Triangle_Mosaic
+
 //*****************************************************************************/
 // 
-// Filename: TriangleMosaic.glsl
+// Filename: sv_Triangle_Mosaic.glsl
 //
 // Triangular mosaic effect - working version with new features
 //

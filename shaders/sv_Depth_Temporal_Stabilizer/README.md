@@ -96,3 +96,7 @@ If the two samples get too close to each other, that division becomes unstable. 
 ## Author
 
 Sinan Vural
+
+## License
+
+Released under the [MIT License](https://github.com/SinanVural1/matchbox/blob/main/LICENSE). You're free to use, modify and share this shader, including on commercial work, as long as the copyright notice is kept.

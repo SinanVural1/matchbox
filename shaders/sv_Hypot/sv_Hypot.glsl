@@ -1,3 +1,7 @@
+// sv_Hypot
+// Copyright (c) 2026 Sinan Vural. MIT License.
+// https://github.com/SinanVural1/matchbox/tree/main/shaders/sv_Hypot
+
 uniform sampler2D front;
 uniform sampler2D back;
 uniform float adsk_result_w;

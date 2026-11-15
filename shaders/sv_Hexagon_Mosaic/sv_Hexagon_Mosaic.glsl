@@ -1,3 +1,7 @@
+// sv_Hexagon_Mosaic
+// Copyright (c) 2026 Sinan Vural. MIT License.
+// https://github.com/SinanVural1/matchbox/tree/main/shaders/sv_Hexagon_Mosaic
+
 //*****************************************************************************/
 // 
 // Filename: sv_Hexagon_Mosaic.glsl

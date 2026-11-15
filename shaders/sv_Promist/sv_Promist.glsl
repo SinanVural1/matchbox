@@ -1,3 +1,7 @@
+// sv_Promist
+// Copyright (c) 2026 Sinan Vural. MIT License.
+// https://github.com/SinanVural1/matchbox/tree/main/shaders/sv_Promist
+
 uniform sampler2D front;
 uniform float adsk_result_w;
 uniform float adsk_result_h;

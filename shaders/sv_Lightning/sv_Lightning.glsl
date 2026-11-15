@@ -1,3 +1,7 @@
+// sv_Lightning
+// Copyright (c) 2026 Sinan Vural. MIT License.
+// https://github.com/SinanVural1/matchbox/tree/main/shaders/sv_Lightning
+
 uniform float adsk_result_w, adsk_result_h;
 uniform float adsk_time;
 uniform vec2 p1; // Source (Normalized)

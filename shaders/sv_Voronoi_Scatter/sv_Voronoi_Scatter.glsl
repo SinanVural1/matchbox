@@ -1,3 +1,7 @@
+// sv_Voronoi_Scatter
+// Copyright (c) 2026 Sinan Vural. MIT License.
+// https://github.com/SinanVural1/matchbox/tree/main/shaders/sv_Voronoi_Scatter
+
 //*****************************************************************************/
 // 
 // Filename: sv_Voronoi_Scatter.glsl

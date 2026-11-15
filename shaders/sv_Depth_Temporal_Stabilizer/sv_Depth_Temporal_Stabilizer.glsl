@@ -1,3 +1,7 @@
+// sv_Depth_Temporal_Stabilizer
+// Copyright (c) 2026 Sinan Vural. MIT License.
+// https://github.com/SinanVural1/matchbox/tree/main/shaders/sv_Depth_Temporal_Stabilizer
+
 // ---------------------------------------------------------------------------
 // Depth Map Temporal Stabilizer
 // Two-point affine (scale + shift) stabilization for relative depth models
