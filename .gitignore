@@ -31,3 +31,8 @@
 /tria_ag_01.xml
 /ui_snapshot_01.png
 /working.xml.DS_Store
+
+# Reference shaders by other authors: kept locally, never published, so the
+# Logik webhook only finds the sv_ shaders.
+/samples/
+/.vscode/

@@ -12,7 +12,7 @@
     SoftwareVersion="2018.3.0"
     LimitInputsToTexture="True"
     Version="1"
-    Description="Two-point affine temporal stabilizer for relative depth maps. Feed raw model output, before any inversion or falloff curve."
+    Description="Two-point affine temporal stabilizer for relative depth maps. Feed raw model output, before any inversion or falloff curve. Video: https://www.youtube.com/live/5Ctu55gq2Ec Contact: sinan@sinanvural.com"
     Name="Depth Temporal Stabilizer">
 
 <Shader GridSubdivision="1" OutputBitDepth="Output" Index="1">
