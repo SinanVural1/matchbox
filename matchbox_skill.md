@@ -569,14 +569,15 @@ Current shaders in `~/GitHub/matchbox/shaders/`:
 
 | File | Description |
 |---|---|
-| `Hexagon_Mosaic` | Honeycomb tessellation mosaic with AA, rotation, luma scaling |
-| `Triangle_Mosaic` | Triangle tessellation mosaic with AA, rotation, luma scaling |
-| `Polyhedra` | 3D regular polyhedra renderer with camera, colour, blend mode controls |
-| `Voronoi_Scatter` | Voronoi-distributed texture patch scattering with icon positioners |
-| `directional_blur` | Directional blur with falloff, sample count, matte-driven selective |
-| `hypot` | Two-input hypot blend mode with strength control |
-| `promist` | Pro-Mist analog filter emulation — blooms/darkens the blacks |
-| `lightning` | Animated lightning bolt with branch controls and curve-driven pointiness |
+| `sv_Hexagon_Mosaic` | Honeycomb tessellation mosaic with AA, rotation, luma scaling |
+| `sv_Triangle_Mosaic` | Triangle tessellation mosaic with AA, rotation, luma scaling |
+| `sv_Polyhedra` | 3D regular polyhedra renderer with camera, colour, blend mode controls |
+| `sv_Voronoi_Scatter` | Voronoi-distributed texture patch scattering with icon positioners |
+| `sv_directional_blur` | Directional blur with falloff, sample count, matte-driven selective |
+| `sv_hypot` | Two-input hypot blend mode with strength control |
+| `sv_promist` | Pro-Mist analog filter emulation — blooms/darkens the blacks |
+| `sv_lightning` | Animated lightning bolt with branch controls and curve-driven pointiness |
+| `sv_depth_temporal_stabilizer` | Two-point temporal stabilizer for ML depth maps, with Near/Far and Range output modes |
 
 ---
 

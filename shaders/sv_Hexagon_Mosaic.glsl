@@ -1,6 +1,6 @@
 //*****************************************************************************/
 // 
-// Filename: Hexagon_Mosaic.glsl
+// Filename: sv_Hexagon_Mosaic.glsl
 //
 // Hexagonal mosaic effect - Robust Axial Rounding Version
 // Fixed: Shape Orientation, Overlap Blending, Scaling range.

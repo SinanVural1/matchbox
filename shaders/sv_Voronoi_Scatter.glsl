@@ -1,6 +1,6 @@
 //*****************************************************************************/
 // 
-// Filename: Voronoi_Scatter.glsl
+// Filename: sv_Voronoi_Scatter.glsl
 //
 // Voronoi Texture Fill - Partitions screen into polygonal cells and fills them.
 // Updated: Input coordinates now treated as Normalized UVs (0-1).
