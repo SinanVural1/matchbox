@@ -484,6 +484,10 @@ vec3 shadeHit(TileHit h, out float mv) {
         c *= max(1.0 + rnd.z * 2.0 * brightness_variation * keep, 0.0);
     } else {
         c = tileColour(1.0, h.backPos, h.l0, h.l1, h.l2);
+        // Flat tiles resolve into the picture as they land, so a finished
+        // transition is a clean Back in Flat mode too. The reverse face only
+        // shows from halfway, hence the 0.5 start.
+        if (fill_mode == 1) c = mix(c, readTex(1.0, h.backPos), smoothstep(0.5, 1.0, h.t));
     }
 
     // Bevel: the strip along each border is lit by how much that border
