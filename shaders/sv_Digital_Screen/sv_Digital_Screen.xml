@@ -1,0 +1,318 @@
+<ShaderNodePreset
+    SupportsAdaptiveDegradation="False"
+    SupportsAction="False"
+    SupportsTransition="False"
+    SupportsTimeline="False"
+    TimelineUseBack="False"
+    MatteProvider="True"
+    CommercialUsePermitted="True"
+    ShaderType="Matchbox"
+    SoftwareVersion="2017.0.0"
+    LimitInputsToTexture="True"
+    Version="2"
+    Description="Digital screen look: the image as seen on a display up close, with RGB subpixel layouts for LCD, CRT, OLED and LED walls, adjustable pixel size, fill, roundness and glow, and dead pixels and panel variation, plus a reference input and two-point fit for matching a real screen. Contact: sinan@sinanvural.com"
+    Name="Digital Screen">
+   <Shader Clear="0" GridSubdivision="1" OutputBitDepth="Output" Index="1">
+      <Uniform
+        Index="0"
+        NoInput="Error"
+        InputType="Front"
+        ToolTip=""
+        DisplayName="Front"
+        Mipmaps="True"
+        GL_TEXTURE_WRAP_T="GL_CLAMP_TO_EDGE"
+        GL_TEXTURE_WRAP_S="GL_CLAMP_TO_EDGE"
+        GL_TEXTURE_MAG_FILTER="GL_LINEAR"
+        GL_TEXTURE_MIN_FILTER="GL_LINEAR_MIPMAP_LINEAR"
+        Type="sampler2D"
+        Name="front">
+      </Uniform>
+      <Uniform
+        Index="1"
+        NoInput="Black"
+        InputType="Back"
+        ToolTip=""
+        DisplayName="Reference"
+        Mipmaps="False"
+        GL_TEXTURE_WRAP_T="GL_CLAMP_TO_EDGE"
+        GL_TEXTURE_WRAP_S="GL_CLAMP_TO_EDGE"
+        GL_TEXTURE_MAG_FILTER="GL_LINEAR"
+        GL_TEXTURE_MIN_FILTER="GL_LINEAR"
+        Type="sampler2D"
+        Name="back">
+      </Uniform>
+
+      <!-- Screen page: Layout (Col 0) -->
+      <Uniform Default="0" ValueType="Popup"
+        ToolTip="Arrangement of the subpixels. RGB Stripe: LCD. Stacked: R, G and B stacked in each pixel. Delta: CRT shadow mask. Aperture Grille: unbroken stripes. PenTile and Diamond: OLED. LED Wall: small dies in a dark package. Quad: a 2x2 block per pixel."
+        Row="0" Col="0" Page="0" Type="int"
+        DisplayName="Layout" Name="screen_layout">
+         <PopupEntry Title="RGB Stripe" Value="0"></PopupEntry>
+         <PopupEntry Title="Stacked" Value="1"></PopupEntry>
+         <PopupEntry Title="Delta" Value="2"></PopupEntry>
+         <PopupEntry Title="Aperture Grille" Value="3"></PopupEntry>
+         <PopupEntry Title="PenTile" Value="4"></PopupEntry>
+         <PopupEntry Title="Diamond" Value="5"></PopupEntry>
+         <PopupEntry Title="LED Wall" Value="6"></PopupEntry>
+         <PopupEntry Title="Quad RGGB" Value="7"></PopupEntry>
+         <PopupEntry Title="Quad RGBW" Value="8"></PopupEntry>
+      </Uniform>
+      <Uniform ResDependent="Width" Max="10000.0" Min="1.0" Default="12.0" Inc="0.1"
+        ToolTip="Width of one screen pixel, in image pixels. Need not be a whole number. Scales with the resolution."
+        Row="1" Col="0" Page="0" Type="float"
+        ChannelName="Pixel Size" DisplayName="Pixel Size" Name="pixel_size">
+      </Uniform>
+      <Uniform ResDependent="None" Max="10.0" Min="0.1" Default="1.0" Inc="0.01"
+        ToolTip="Height of a screen pixel relative to its width."
+        Row="2" Col="0" Page="0" Type="float"
+        ChannelName="Pixel Aspect" DisplayName="Pixel Aspect" Name="pixel_aspect">
+      </Uniform>
+      <Uniform ResDependent="None" Max="100000.0" Min="-100000.0" Default="0.0" Inc="0.1"
+        ToolTip="Rotation of the pixel grid, in degrees."
+        Row="3" Col="0" Page="0" Type="float"
+        ChannelName="Rotation" DisplayName="Rotation" Name="grid_rotation">
+      </Uniform>
+      <Uniform Default="0" ValueType="Popup"
+        ToolTip="RGB Subpixels: each subpixel lights its own channel, as on a real screen. Source Colour: the layout only shapes the light, and every subpixel shows the pixel colour untinted."
+        Row="4" Col="0" Page="0" Type="int"
+        DisplayName="Colour" Name="colour_mode">
+         <PopupEntry Title="RGB Subpixels" Value="0"></PopupEntry>
+         <PopupEntry Title="Source Colour" Value="1"></PopupEntry>
+      </Uniform>
+      <Uniform Default="False"
+        ToolTip="Flips which pixels take turns: red and blue in PenTile and Diamond, the offset rows in Delta. Use it when the grid lines up with a reference but red and blue are swapped."
+        Row="5" Col="0" Page="0" Type="bool"
+        ChannelName="Swap Phase" DisplayName="Swap Phase" Name="swap_phase">
+      </Uniform>
+
+      <!-- Position (Col 1) -->
+      <Uniform Inc="0.001"
+        ToolTip="Origin of the pixel grid. Drag the axis in the viewer, or paste Action tracker data with Action Coords on."
+        Row="0" Col="1" Page="0" DisplayName="Grid Centre" Type="vec2"
+        IconType="Axis" IconDefaultState="True" Name="grid_centre">
+        <SubUniform ResDependent="None" Max="100000.0" Min="-100000.0" Default="0.5"></SubUniform>
+        <SubUniform ResDependent="None" Max="100000.0" Min="-100000.0" Default="0.5"></SubUniform>
+      </Uniform>
+      <Uniform Default="False"
+        ToolTip="Read Grid Centre as Action coordinates: pixels from the image centre, as Action trackers give them."
+        Row="2" Col="1" Page="0" Type="bool"
+        ChannelName="Action Coords" DisplayName="Action Coords" Name="action_coords">
+      </Uniform>
+
+      <!-- Subpixels (Col 2) -->
+      <Uniform ResDependent="None" Max="1.0" Min="0.0" Default="0.85" Inc="0.01"
+        ToolTip="How much of its slot each subpixel fills. Lower values widen the dark gaps between them."
+        Row="0" Col="2" Page="0" Type="float"
+        ChannelName="Fill" DisplayName="Fill" Name="fill">
+      </Uniform>
+      <Uniform ResDependent="None" Max="1.0" Min="0.0" Default="0.3" Inc="0.01"
+        ToolTip="Corner rounding of the subpixels. 1 makes square slots into circles and tall slots into capsules."
+        Row="1" Col="2" Page="0" Type="float"
+        ChannelName="Roundness" DisplayName="Roundness" Name="roundness">
+      </Uniform>
+      <Uniform ResDependent="None" Max="2.0" Min="0.0" Default="0.0" Inc="0.01"
+        ToolTip="Edge falloff of the subpixels, as a fraction of their size. Edges are anti-aliased at 0."
+        Row="2" Col="2" Page="0" Type="float"
+        ChannelName="Softness" DisplayName="Softness" Name="softness">
+      </Uniform>
+      <Uniform ResDependent="None" Max="2.0" Min="0.0" Default="0.0" Inc="0.01"
+        ToolTip="Light bleeding out around each subpixel, as on a screen seen through a lens."
+        Row="3" Col="2" Page="0" Type="float"
+        ChannelName="Glow" DisplayName="Glow" Name="glow">
+      </Uniform>
+      <Uniform ResDependent="None" Max="1.0" Min="0.001" Default="0.15" Inc="0.001"
+        ToolTip="Reach of the glow, as a fraction of pixel size."
+        Row="4" Col="2" Page="0" Type="float"
+        ChannelName="Glow Size" DisplayName="Glow Size" Name="glow_size">
+      </Uniform>
+
+      <!-- Picture (Col 3) -->
+      <Uniform Default="0" ValueType="Popup"
+        ToolTip="Area: each screen pixel shows the image averaged over its own area, so fine detail does not flicker. Point: one sample at the pixel centre."
+        Row="0" Col="3" Page="0" Type="int"
+        DisplayName="Sampling" Name="sampling">
+         <PopupEntry Title="Area" Value="0"></PopupEntry>
+         <PopupEntry Title="Point" Value="1"></PopupEntry>
+      </Uniform>
+      <Uniform ResDependent="None" Max="1.0" Min="0.0" Default="1.0" Inc="0.01"
+        ToolTip="Brightens the subpixels to make up for the light lost in the gaps. 1 keeps the picture average brightness, so small dots in big gaps get very bright. 0 is the raw mask."
+        Row="1" Col="3" Page="0" Type="float"
+        ChannelName="Compensation" DisplayName="Compensation" Name="compensation">
+      </Uniform>
+      <Uniform ResDependent="None" Max="100.0" Min="0.0" Default="1.0" Inc="0.01"
+        ToolTip="Overall brightness of the screen."
+        Row="2" Col="3" Page="0" Type="float"
+        ChannelName="Gain" DisplayName="Gain" Name="gain">
+      </Uniform>
+      <Uniform Type="vec3" ValueType="Colour" Action3DWidget="False" IconType="None"
+        ToolTip="Colour between the subpixels."
+        DisplayName="Gap Colour" ChannelName="Gap Colour" Inc="0.01"
+        Row="3" Col="3" Page="0" Name="gap_colour">
+        <SubUniform ResDependent="None" Min="-1000.0" Max="1000.0" Default="0.0"></SubUniform>
+        <SubUniform ResDependent="None" Min="-1000.0" Max="1000.0" Default="0.0"></SubUniform>
+        <SubUniform ResDependent="None" Min="-1000.0" Max="1000.0" Default="0.0"></SubUniform>
+      </Uniform>
+
+      <!-- Match page: Fit (Col 0) -->
+      <Uniform Default="False"
+        ToolTip="Set Pixel Size, Rotation and the grid origin from Point A and Point B. Place both on the same spot of two screen pixels in the reference, and enter how many pixels apart they are."
+        Row="0" Col="0" Page="1" Type="bool"
+        ChannelName="Fit to Points" DisplayName="Fit to Points" Name="fit_points">
+      </Uniform>
+      <Uniform ResDependent="None" Max="10000.0" Min="-10000.0" Default="10.0" Inc="1.0"
+        ToolTip="Screen pixels from A to B along a row. Spread the points as far apart as you can count accurately."
+        Row="1" Col="0" Page="1" Type="float"
+        ChannelName="Pixels Across" DisplayName="Pixels Across" Name="pixels_x">
+      </Uniform>
+      <Uniform ResDependent="None" Max="10000.0" Min="-10000.0" Default="0.0" Inc="1.0"
+        ToolTip="Screen pixels from A to B down a column. 0 when both points are on the same row."
+        Row="2" Col="0" Page="1" Type="float"
+        ChannelName="Pixels Down" DisplayName="Pixels Down" Name="pixels_y">
+      </Uniform>
+      <Uniform Default="False"
+        ToolTip="Draw the outline of every screen pixel and the two points, to line the grid up with the reference. Turn off before rendering."
+        Row="3" Col="0" Page="1" Type="bool"
+        ChannelName="Show Guides" DisplayName="Show Guides" Name="show_guides">
+      </Uniform>
+
+      <!-- Points (Col 1) -->
+      <Uniform Inc="0.001"
+        ToolTip="A spot on one screen pixel of the reference, such as the centre of a green subpixel. Uses Action Coords like Grid Centre."
+        Row="0" Col="1" Page="1" DisplayName="Point A" Type="vec2"
+        IconType="Axis" IconDefaultState="True" Name="point_a">
+        <SubUniform ResDependent="None" Max="100000.0" Min="-100000.0" Default="0.4"></SubUniform>
+        <SubUniform ResDependent="None" Max="100000.0" Min="-100000.0" Default="0.5"></SubUniform>
+      </Uniform>
+      <Uniform Inc="0.001"
+        ToolTip="The same spot on another screen pixel, Pixels Across and Pixels Down away from Point A."
+        Row="2" Col="1" Page="1" DisplayName="Point B" Type="vec2"
+        IconType="Axis" IconDefaultState="True" Name="point_b">
+        <SubUniform ResDependent="None" Max="100000.0" Min="-100000.0" Default="0.6"></SubUniform>
+        <SubUniform ResDependent="None" Max="100000.0" Min="-100000.0" Default="0.5"></SubUniform>
+      </Uniform>
+
+      <!-- Reference (Col 2) -->
+      <Uniform Default="0" ValueType="Popup"
+        ToolTip="Compare the result with the Reference input. Blend mixes them, Split shows the reference right of a line, Difference shows where they differ. Turn off before rendering."
+        Row="0" Col="2" Page="1" Type="int"
+        DisplayName="View" Name="reference_view">
+         <PopupEntry Title="Off" Value="0"></PopupEntry>
+         <PopupEntry Title="Blend" Value="1"></PopupEntry>
+         <PopupEntry Title="Split" Value="2"></PopupEntry>
+         <PopupEntry Title="Difference" Value="3"></PopupEntry>
+      </Uniform>
+      <Uniform ResDependent="None" Max="1.0" Min="0.0" Default="0.5" Inc="0.01"
+        ToolTip="Amount of reference in the Blend view."
+        Row="1" Col="2" Page="1" Type="float"
+        ChannelName="Mix" DisplayName="Mix" Name="reference_mix">
+      </Uniform>
+      <Uniform ResDependent="None" Max="1.0" Min="0.0" Default="0.5" Inc="0.001"
+        ToolTip="Position of the line in the Split view, across the frame."
+        Row="2" Col="2" Page="1" Type="float"
+        ChannelName="Split" DisplayName="Split" Name="split_position">
+      </Uniform>
+
+      <!-- Imperfections page: Pixels (Col 0) -->
+      <Uniform ResDependent="None" Max="1.0" Min="0.0" Default="0.0" Inc="0.0001"
+        ToolTip="Fraction of screen pixels that stay dark."
+        Row="0" Col="0" Page="2" Type="float"
+        ChannelName="Dead Pixels" DisplayName="Dead Pixels" Name="dead_pixels">
+      </Uniform>
+      <Uniform ResDependent="None" Max="1.0" Min="0.0" Default="0.0" Inc="0.0001"
+        ToolTip="Fraction of screen pixels with one subpixel stuck fully on."
+        Row="1" Col="0" Page="2" Type="float"
+        ChannelName="Stuck Pixels" DisplayName="Stuck Pixels" Name="stuck_pixels">
+      </Uniform>
+      <Uniform ResDependent="None" Max="1.0" Min="0.0" Default="0.0" Inc="0.01"
+        ToolTip="Random brightness change per screen pixel, up to this fraction either way."
+        Row="2" Col="0" Page="2" Type="float"
+        ChannelName="Pixel Variation" DisplayName="Pixel Variation" Name="pixel_variation">
+      </Uniform>
+      <Uniform ResDependent="None" Max="1.0" Min="0.0" Default="0.0" Inc="0.01"
+        ToolTip="Random brightness change per subpixel, which tints pixels at random."
+        Row="3" Col="0" Page="2" Type="float"
+        ChannelName="Subpixel Variation" DisplayName="Subpixel Variation" Name="subpixel_variation">
+      </Uniform>
+
+      <!-- Panels (Col 1) -->
+      <Uniform ResDependent="None" Max="10000.0" Min="1.0" Default="64.0" Inc="1.0"
+        ToolTip="Screen pixels along each side of a panel, as in the modules of an LED wall."
+        Row="0" Col="1" Page="2" Type="float"
+        ChannelName="Panel Size" DisplayName="Panel Size" Name="panel_size">
+      </Uniform>
+      <Uniform ResDependent="None" Max="1.0" Min="0.0" Default="0.0" Inc="0.01"
+        ToolTip="Random brightness change per panel, up to this fraction either way."
+        Row="1" Col="1" Page="2" Type="float"
+        ChannelName="Panel Variation" DisplayName="Panel Variation" Name="panel_variation">
+      </Uniform>
+      <Uniform ResDependent="None" Max="1.0" Min="0.0" Default="0.0" Inc="0.01"
+        ToolTip="Random colour shift per panel."
+        Row="2" Col="1" Page="2" Type="float"
+        ChannelName="Panel Tint" DisplayName="Panel Tint" Name="panel_tint">
+      </Uniform>
+
+      <!-- Random (Col 2) -->
+      <Uniform ResDependent="None" Max="100000.0" Min="-100000.0" Default="0.0" Inc="1.0"
+        ToolTip="Picks a new random set of dead, stuck and varied pixels and panels."
+        Row="0" Col="2" Page="2" Type="float"
+        ChannelName="Variation" DisplayName="Variation" Name="variation">
+      </Uniform>
+
+      <!-- Output page (Col 0) -->
+      <Uniform Default="0" ValueType="Popup"
+        ToolTip="What the matte output carries. Coverage: white on the subpixels, black in the gaps. Source Alpha: the input alpha passed through."
+        Row="0" Col="0" Page="3" Type="int"
+        DisplayName="Matte" Name="matte_mode">
+         <PopupEntry Title="Coverage" Value="0"></PopupEntry>
+         <PopupEntry Title="Source Alpha" Value="1"></PopupEntry>
+      </Uniform>
+      <Uniform Default="1" ValueType="Popup"
+        ToolTip="Samples per pixel. Edges are anti-aliased at 1; more samples help very small or rotated pixels. Higher is slower."
+        Row="1" Col="0" Page="3" Type="int"
+        DisplayName="Samples" Name="samples">
+         <PopupEntry Title="1" Value="1"></PopupEntry>
+         <PopupEntry Title="4" Value="4"></PopupEntry>
+         <PopupEntry Title="9" Value="9"></PopupEntry>
+         <PopupEntry Title="16" Value="16"></PopupEntry>
+      </Uniform>
+      <Uniform Default="0" ValueType="Popup"
+        ToolTip="Front: the input as it arrives. Pixel Colour: the colour each screen pixel shows, without the mask. Mask Only: the subpixel pattern on a white picture."
+        Row="2" Col="0" Page="3" Type="int"
+        DisplayName="Debug" Name="debug_mode">
+         <PopupEntry Title="Off" Value="0"></PopupEntry>
+         <PopupEntry Title="Front" Value="1"></PopupEntry>
+         <PopupEntry Title="Pixel Colour" Value="2"></PopupEntry>
+         <PopupEntry Title="Mask Only" Value="3"></PopupEntry>
+      </Uniform>
+   </Shader>
+   <Page Name="Screen" Page="0">
+      <Col Name="Layout" Col="0" Page="0">
+      </Col>
+      <Col Name="Position" Col="1" Page="0">
+      </Col>
+      <Col Name="Subpixels" Col="2" Page="0">
+      </Col>
+      <Col Name="Picture" Col="3" Page="0">
+      </Col>
+   </Page>
+   <Page Name="Match" Page="1">
+      <Col Name="Fit" Col="0" Page="1">
+      </Col>
+      <Col Name="Points" Col="1" Page="1">
+      </Col>
+      <Col Name="Reference" Col="2" Page="1">
+      </Col>
+   </Page>
+   <Page Name="Imperfections" Page="2">
+      <Col Name="Pixels" Col="0" Page="2">
+      </Col>
+      <Col Name="Panels" Col="1" Page="2">
+      </Col>
+      <Col Name="Random" Col="2" Page="2">
+      </Col>
+   </Page>
+   <Page Name="Output" Page="3">
+      <Col Name="Output" Col="0" Page="3">
+      </Col>
+   </Page>
+</ShaderNodePreset>
