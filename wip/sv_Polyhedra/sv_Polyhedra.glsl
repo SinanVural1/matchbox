@@ -1,8 +1,9 @@
 // sv_Polyhedra
+// WORK IN PROGRESS: unfinished, not yet brought up to this repo's current standard. See wip/README.md.
 // Copyright (c) 2026 Sinan Vural.
 // Based on a Shadertoy shader by FabriceNeyret2. Not covered by this
 // repository's MIT License: it follows the terms of the original work.
-// https://github.com/SinanVural1/matchbox/tree/main/shaders/sv_Polyhedra
+// https://github.com/SinanVural1/matchbox/tree/main/wip/sv_Polyhedra
 
 uniform float adsk_time;
 uniform float adsk_result_w, adsk_result_h;

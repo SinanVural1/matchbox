@@ -22,7 +22,7 @@ SOFTWARE.
 
 ---------------------------------------------------------------------------
 
-Exception: shaders/sv_Polyhedra
+Exception: wip/sv_Polyhedra
 
 sv_Polyhedra is based on a Shadertoy shader by FabriceNeyret2 and is not
 covered by the MIT License above. It is distributed under the terms of the

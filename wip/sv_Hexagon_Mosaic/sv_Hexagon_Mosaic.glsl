@@ -1,6 +1,7 @@
 // sv_Hexagon_Mosaic
+// WORK IN PROGRESS: unfinished, not yet brought up to this repo's current standard. See wip/README.md.
 // Copyright (c) 2026 Sinan Vural. MIT License.
-// https://github.com/SinanVural1/matchbox/tree/main/shaders/sv_Hexagon_Mosaic
+// https://github.com/SinanVural1/matchbox/tree/main/wip/sv_Hexagon_Mosaic
 
 //*****************************************************************************/
 // 

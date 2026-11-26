@@ -36,3 +36,11 @@
 # Logik webhook only finds the sv_ shaders.
 /samples/
 /.vscode/
+
+# macOS folder metadata, anywhere in the tree.
+.DS_Store
+
+# Local Claude Code files: personal notes, and the browser preview config,
+# which holds paths on this machine.
+CLAUDE.local.md
+.claude/launch.json
