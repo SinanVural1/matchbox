@@ -9,7 +9,7 @@ Splits the frame into Voronoi cells and fills each with a patch of the source, e
 ## Status
 
 - Fixes and all four Look-page features confirmed working in Flame by the user.
-- Published: README, `.glsl.p` icon (sunset stained glass, rendered from a numpy port of the shader), ZIP. The icon has not been checked in Flame's browser.
+- Published: README, `.glsl.p` icon (sunset stained glass, rendered from a numpy port of the shader), ZIP. The icon is confirmed in Flame's browser.
 - Not on logik-matchbook.org.
 
 ## Structure

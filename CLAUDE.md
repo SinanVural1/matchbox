@@ -42,6 +42,8 @@ samples/                    other authors' shaders, local only (gitignored)
 
 "Published" means the shader is in `shaders/` with its README, icon and ZIP on GitHub. "WIP" means it is in `wip/`: written before the current rules, still failing the validator on old patterns, and marked unfinished in its header and in `wip/README.md`. Fix those when the shader is next worked on. When one is finished, `git mv` it to `shaders/`, change the link in its header, remove the WORK IN PROGRESS line and its entry in `wip/README.md`, and follow the publishing checklist.
 
+**Icons:** the current `.glsl.p` icons are all confirmed in Flame, but they are placeholders. The user is designing a unified visual for all their Matchbox icons; don't redesign them in the meantime, and replace them all once that design is ready.
+
 ## Conventions
 
 - **Names:** folders and files are `sv_Camel_Case_Name`. The XML `Name` (what Flame shows) has no prefix, for example `Name="Digital Screen"`.

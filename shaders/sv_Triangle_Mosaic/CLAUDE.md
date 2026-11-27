@@ -9,8 +9,8 @@ A triangle mosaic that can also transition from Front to Back tile by tile, driv
 ## Status
 
 - Rebuilt from scratch at the user's request (old setups were explicitly not a concern). The rebuild was confirmed working in Flame.
-- **Not yet confirmed in Flame:** the Flat-mode fix below (added with the README), the `.glsl.p` icon, and use as a Timeline transition.
-- Published: README, icon, ZIP. Not on logik-matchbook.org.
+- **Not yet confirmed in Flame:** the Flat-mode fix below (added with the README) and use as a Timeline transition.
+- Published: README, icon (confirmed in Flame's browser), ZIP. Not on logik-matchbook.org.
 
 ## Structure
 

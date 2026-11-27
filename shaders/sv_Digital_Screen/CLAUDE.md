@@ -11,7 +11,7 @@ Built because none of the existing Matchbox shaders could do it: `crok_scanlines
 ## Status
 
 - Confirmed working in Flame by the user, including the Reference input, Fit to Points and Source Colour.
-- Published: README, `.glsl.p` icon (sunset on a fine screen with a magnifier loupe), ZIP. The icon has not been checked in Flame's browser.
+- Published: README, `.glsl.p` icon (sunset on a fine screen with a magnifier loupe), ZIP. The icon is confirmed in Flame's browser.
 - Not on logik-matchbook.org.
 
 ## Structure
